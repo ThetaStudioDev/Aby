@@ -8,9 +8,9 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEditor.SceneManagement;
 
-using Theta.Unity.Runtime;
+using Aby.Unity.Plugin;
 
-namespace Theta.Unity.Editor.Aby
+namespace Aby.Unity.Editor.Aby
 {
     /// <summary>
     /// TODO
@@ -52,7 +52,7 @@ namespace Theta.Unity.Editor.Aby
         /// TODO
         /// </summary>
         [SerializeField]
-        private AbyEnv m_CurrentEnvironment;
+        private AbyRuntimeConfig m_CurrentEnvironment;
 
         /// <summary>
         /// TODO
@@ -77,7 +77,7 @@ namespace Theta.Unity.Editor.Aby
         /// <summary>
         /// TODO
         /// </summary>
-        [MenuItem("Theta/Aby Controller")]
+        [MenuItem("Aby/Aby Runtime Controller")]
         public static void ShowWindow()
         {
             var abyControllerWindow = GetWindow<AbyControllerEditorWindow>();
@@ -100,7 +100,7 @@ namespace Theta.Unity.Editor.Aby
             else
             {
                 var envConfigPath = AssetDatabase.GUIDToAssetPath(envConfigs[0]);
-                m_CurrentEnvironment = AssetDatabase.LoadAssetAtPath<AbyEnv>(envConfigPath);
+                m_CurrentEnvironment = AssetDatabase.LoadAssetAtPath<AbyRuntimeConfig>(envConfigPath);
             }
         }
 
@@ -118,12 +118,16 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         public void CreateGUI()
         {
-            // Mount the admin ui and bind state.
-            rootVisualElement.Add(m_VisualTreeAsset.Instantiate());
-
-            DrawRuntimeControlToolbar();
+            if (m_VisualTreeAsset != null)
+            {
+                rootVisualElement.Add(m_VisualTreeAsset.Instantiate());
+                DrawRuntimeControlToolbar();
+            }
+            else
+            {
+                Debug.LogError("VisualTreeAsset is not assigned.");
+            }
         }
-
         /// <summary>
         /// TODO
         /// </summary>
@@ -136,7 +140,7 @@ namespace Theta.Unity.Editor.Aby
             }
             else
             {
-                stateLabel.text = $"Runtime State: {JsRuntime.State}";
+                stateLabel.text = $"Runtime State: {AbyRuntime.State}";
             }
 
             var toggleButton = rootVisualElement.Q<Button>("ToggleButton");
@@ -166,7 +170,11 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         public void OnGUI()
         {
-            //..
+            var toggleButton = rootVisualElement.Q<Button>("ToggleButton");
+            if (toggleButton != null)
+            {
+                toggleButton.text = AbyRuntime.IsRunning == false ? "Start" : "Stop";
+            }
         }
 
         /// <summary>
@@ -182,13 +190,13 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         private void OnToggleButtonClicked()
         {
-            if (JsRuntime.IsRunning == false)
+            if (!AbyRuntime.IsRunning)
             {
-                JsRuntime.StartServiceThread();
+                AbyRuntime.StartServiceThread();
             }
             else
             {
-                JsRuntime.StopServiceThread();
+                AbyRuntime.StopServiceThread();
             }
         }
 

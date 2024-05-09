@@ -6,10 +6,10 @@ using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditor.UIElements;
 
-using Theta.Unity.Runtime;
+using Aby.Unity.Plugin;
 using System;
 
-namespace Theta.Unity.Editor.Aby
+namespace Aby.Unity.Editor.Aby
 {
     /// <summary>
     /// TODO
@@ -25,7 +25,14 @@ namespace Theta.Unity.Editor.Aby
         /// <summary>
         /// TODO
         /// </summary>
-        private static string m_LogFilePath = "examples/logs/stdout.log";
+        [SerializeField]
+        private static string m_LogDir = "./Logs";
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        [SerializeField]
+        private static string m_LogFilter = "./Logs/AbyRuntime.*.log";
 
         /// <summary>
         /// TODO
@@ -36,7 +43,7 @@ namespace Theta.Unity.Editor.Aby
         /// <summary>
         /// TODO
         /// </summary>
-        [MenuItem("Theta/Aby Runtime Monitor")]
+        [MenuItem("Aby/Aby Runtime Monitor")]
         public static void ShowWindow()
         {
             var abyMonitorWindow = GetWindow<AbyRuntimeMonitorEditorWindow>();
@@ -49,7 +56,7 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         public void Awake()
         {
-            Debug.LogFormat("Monitoring log files at '{0}' ..", Path.GetFullPath(m_LogFilePath));
+            Debug.LogFormat("Monitoring log files at '{0}' ..", Path.GetFullPath(m_LogFilter));
         }
 
         /// <summary>
@@ -69,8 +76,8 @@ namespace Theta.Unity.Editor.Aby
             {
                 m_LogWatcher = new FileSystemWatcher()
                 {
-                    Path = Path.GetDirectoryName(m_LogFilePath),
-                    Filter = Path.GetFileName(m_LogFilePath),
+                    Path = Path.GetFullPath(m_LogDir),
+                    Filter = Path.GetFileName(m_LogFilter),
                     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
                     EnableRaisingEvents = true,
                 };
@@ -106,10 +113,16 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         public void CreateGUI()
         {
-            rootVisualElement.Add(m_VisualTreeAsset.Instantiate());
-
-            CreateEnvironmentMenu();
-            CreateMasthead();
+            if (m_VisualTreeAsset != null)
+            {
+                rootVisualElement.Add(m_VisualTreeAsset.Instantiate());
+                CreateEnvironmentMenu();
+                CreateMasthead();
+            }
+            else
+            {
+                Debug.LogError("VisualTreeAsset is not assigned.");
+            }
         }
 
         /// <summary>
