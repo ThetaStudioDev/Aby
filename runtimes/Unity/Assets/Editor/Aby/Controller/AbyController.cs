@@ -138,10 +138,10 @@ namespace Theta.Unity.Editor.Aby
             {
                 Debug.LogWarning("RuntimeState element not found ..");
             }
-            else
-            {
-                stateLabel.text = $"Runtime State: {JsRuntime.State}";
-            }
+            //else
+            //{
+            //    stateLabel.text = $"Runtime State: {JsRuntime.State}";
+            //}
 
             var toggleButton = rootVisualElement.Q<Button>("ToggleButton");
             if (toggleButton == null)
@@ -171,10 +171,10 @@ namespace Theta.Unity.Editor.Aby
         public void OnGUI()
         {
             var toggleButton = rootVisualElement.Q<Button>("ToggleButton");
-            if (toggleButton != null)
-            {
-                toggleButton.text = JsRuntime.IsRunning == false ? "Start" : "Stop";
-            }
+            //if (toggleButton != null)
+            //{
+            //    toggleButton.text = JsRuntime.IsRunning == false ? "Start" : "Stop";
+            //}
         }
 
         /// <summary>
@@ -190,14 +190,14 @@ namespace Theta.Unity.Editor.Aby
         /// </summary>
         private void OnToggleButtonClicked()
         {
-            if (!JsRuntime.IsRunning)
-            {
-                JsRuntime.StartServiceThread();
-            }
-            else
-            {
-                JsRuntime.StopServiceThread();
-            }
+            //if (!JsRuntime.IsRunning)
+            //{
+            //    JsRuntime.StartServiceThread();
+            //}
+            //else
+            //{
+            //    JsRuntime.StopServiceThread();
+            //}
         }
 
         /// <summary>
